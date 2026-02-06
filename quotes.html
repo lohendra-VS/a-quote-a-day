@@ -1074,6 +1074,26 @@ body.t-brutalist .dir-row-avatar { border-radius: 4px; }
     background: rgba(255,255,255,0.08); /* More visible tap target */
   }
 }
+.comment-btn {
+  display: inline-block;
+  margin: 18px auto 0;
+  padding: 8px 18px;
+  border-radius: 20px;
+  font-size: 12px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--gold);
+  border: 1px solid var(--card-border);
+  background: rgba(255,255,255,0.05);
+  transition: all 0.25s;
+}
+
+.comment-btn:hover {
+  background: rgba(255,255,255,0.12);
+  border-color: var(--gold);
+  transform: translateY(-1px);
+}
 
 </style>
 </head>
@@ -1108,6 +1128,13 @@ body.t-brutalist .dir-row-avatar { border-radius: 4px; }
 
     <!-- Reactions -->
     <div class="reactions" id="reactions"></div>
+    <a id="commentLink"
+   class="comment-btn"
+   target="_blank"
+   rel="noopener">
+  💬 Discuss this quote
+</a>
+
 
     <!-- Nav -->
     <div class="nav-arrows">
@@ -1265,6 +1292,9 @@ function render(animate = false) {
 
   updateDots();
   renderReactionCounts();
+ const commentLink = document.getElementById('commentLink');
+  commentLink.href =
+    `https://github.com/AndrewVeda/a-quote-a-day/discussions/${idx + 1}`;
 }
 
 /* ══════════════════════════════════════════════
