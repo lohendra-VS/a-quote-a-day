@@ -6,44 +6,9 @@ This repository supports a simple daily practice: reading a quote, thinking abou
 
 ---
 
-## 📂 Repository Structure
-
-```
-quotes/
- ├── YYYY-MM-DD/
- │   ├── student-name.md
- │   ├── another-student.md
- │   └── ...
-```
-
-- Each folder represents **one calendar day**
-- Each file represents **one student’s contribution for that day**
-- Students may contribute **on many different days**
-- Students must contribute **only once per day**
-
----
-
 ## ✍️ Contribution Rules (Students)
 
 Students are encouraged to contribute **every day**.
-
-You may:
-- contribute on multiple days
-- add **one file per day**
-- use the same filename on different days (your name)
-
-You must:
-- add your file **only** inside the current day’s folder
-- add **exactly one file per day**
-- follow the quote format exactly
-
-You must not:
-- submit more than one file on the same day
-- edit or delete existing files
-- rename folders or files created by others
-- modify README files or repository structure
-
-Pull Requests that do not follow these rules may be closed without merging.
 
 ---
 
@@ -58,15 +23,6 @@ Each file must contain **one quote** in the following format:
 
 ---
 
-## 🔄 Submission Process
-
-1. Open the repository link shared by your instructor  
-2. Navigate to the current date’s folder  
-3. Click **Add file → Create new file**  
-4. Name the file using your name (e.g. `anu.md`)  
-5. Commit changes and create a Pull Request  
-6. Wait for review and merge  
-
 One merged Pull Request counts as **one valid daily contribution**.
 
 ---
@@ -78,7 +34,7 @@ This repository values:
 - reflection over display  
 - growth over polish  
 
-Contributor history reflects **authorship and participation**, not technical coding work.
+Contributor history reflects **authorship and participation**.
 
 ---
 
@@ -90,4 +46,4 @@ Contributor history reflects **authorship and participation**, not technical cod
 
 ---
 
-> Return tomorrow. That matters more than adding more today.
+> Return tomorrow. That matters more than adding more today!
