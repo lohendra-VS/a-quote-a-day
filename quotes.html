@@ -1194,7 +1194,7 @@ let current  = 'glass';
 
 document.addEventListener('DOMContentLoaded', async () => {
   buildThemeBtns();
-  buildReactionBtns();
+
   await loadState();        // async now — theme + index
   await fetchQuotes();      // also calls hydrateAllReactions() at the end
   render();
@@ -1241,8 +1241,7 @@ async function fetchQuotes() {
     buildDots();
     buildDirectoryIndex();
     // pull every shared reaction key into memory so the UI is warm on load
-    await hydrateAllReactions();
-
+   
   } catch(e) {
     document.getElementById('qText').textContent = 'Could not load quotes — check your connection.';
     console.error(e);
@@ -1276,7 +1275,7 @@ function render(animate = false) {
   document.getElementById('counter').textContent  = `${idx + 1} / ${quotes.length}`;
 
   updateDots();
-  renderReactionCounts();
+  
  const commentLink = document.getElementById('commentLink');
 
   commentLink.href =
@@ -1328,119 +1327,7 @@ function updateDots() {
    ══════════════════════════════════════════════ */
 
 /* key helpers ─────────────────────────────────── */
-function sharedKey(i) { return `qd-rxn:${i}`; }          // shared counters per quote
-const   USER_KEY      = 'qd-my-rxns';                     // personal: which ones I've tapped
 
-/* hydrate ─────────────────────────────────────── */
-// Pull every shared reaction blob that already exists into the in-memory cache.
-// We list all keys with our prefix, then read them in one tight loop.
-async function hydrateAllReactions() {
-  try {
-    const listing = await window.storage.list('qd-rxn:', true); // shared = true
-    if (listing && listing.keys) {
-      for (const k of listing.keys) {
-        try {
-          const row = await window.storage.get(k, true);
-          if (row) {
-            const i = k.replace('qd-rxn:', '');
-            reactionData[i] = JSON.parse(row.value);
-          }
-        } catch(_) { /* key may have vanished */ }
-      }
-    }
-  } catch(_) { /* storage not yet ready */ }
-
-  // also load the user's own toggle-set (personal, not shared)
-  try {
-    const me = await window.storage.get(USER_KEY, false);
-    if (me) {
-      const raw = JSON.parse(me.value);
-      userReacted = {};
-      Object.entries(raw).forEach(([k, v]) => { userReacted[k] = new Set(v); });
-    }
-  } catch(_) { /* first visit */ }
-}
-
-/* build DOM ───────────────────────────────────── */
-function buildReactionBtns() {
-  const wrap = document.getElementById('reactions');
-  REACTIONS.forEach(r => {
-    const btn = document.createElement('div');
-    btn.className = 'rxn';
-    btn.id = 'rxn-' + r.key;
-    btn.innerHTML = `<span class="rxn-icon">${r.emoji}</span><span class="rxn-count">0</span>`;
-    btn.onclick = () => toggleReaction(r.key);
-    wrap.appendChild(btn);
-  });
-}
-
-/* toggle ──────────────────────────────────────── */
-async function toggleReaction(key) {
-  // ── 1. optimistic local update ──
-  if (!reactionData[idx])  reactionData[idx]  = {};
-  if (!userReacted[idx])   userReacted[idx]   = new Set();
-
-  const adding = !userReacted[idx].has(key);
-  if (adding) {
-    userReacted[idx].add(key);
-    reactionData[idx][key] = (reactionData[idx][key] || 0) + 1;
-  } else {
-    userReacted[idx].delete(key);
-    reactionData[idx][key] = Math.max(0, (reactionData[idx][key] || 1) - 1);
-  }
-
-  // pop animation
-  const btn  = document.getElementById('rxn-' + key);
-  const icon = btn.querySelector('.rxn-icon');
-  icon.classList.remove('pop');
-  void icon.offsetWidth;
-  icon.classList.add('pop');
-
-  renderReactionCounts();
-
-  // ── 2. persist shared counters ──
-  try {
-    // re-read so we don't clobber a concurrent writer
-    let live = {};
-    try {
-      const row = await window.storage.get(sharedKey(idx), true);
-      if (row) live = JSON.parse(row.value);
-    } catch(_) { /* key doesn't exist yet */ }
-
-    // apply our delta on top of the live value
-    live[key] = (live[key] || 0) + (adding ? 1 : -1);
-    if (live[key] < 0) live[key] = 0;
-
-    await window.storage.set(sharedKey(idx), JSON.stringify(live), true);
-
-    // write back the authoritative numbers so our UI stays in sync
-    reactionData[idx] = live;
-    renderReactionCounts();
-  } catch(e) { console.warn('shared write failed', e); }
-
-  // ── 3. persist personal toggle-set ──
-  try {
-    const serialised = {};
-    Object.entries(userReacted).forEach(([k, s]) => { serialised[k] = [...s]; });
-    await window.storage.set(USER_KEY, JSON.stringify(serialised), false);
-  } catch(e) { console.warn('personal write failed', e); }
-}
-
-/* render counts from cache ────────────────────── */
-function renderReactionCounts() {
-  const data = reactionData[idx] || {};
-  const user = userReacted[idx]  || new Set();
-  REACTIONS.forEach(r => {
-    const btn   = document.getElementById('rxn-' + r.key);
-    const count = btn.querySelector('.rxn-count');
-    count.textContent = data[r.key] || 0;
-    btn.classList.toggle('active', user.has(r.key));
-  });
-}
-
-/* ══════════════════════════════════════════════
-   THEMES
-   ══════════════════════════════════════════════ */
 function buildThemeBtns() {
   const strip = document.getElementById('themeBtns');
   THEMES.forEach(t => {
