@@ -1109,6 +1109,20 @@ body.t-wellness {
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
 }
+.capture-clone {
+  position: fixed !important;
+  top: -10000px !important;
+  left: 0;
+  width: 720px; /* story-safe width */
+  background: #0f1629; /* fallback */
+  overflow: visible !important;
+}
+
+.capture-clone * {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  filter: none !important;
+}
 
 
 </style>
@@ -1579,52 +1593,53 @@ function escHtml(s) {
    AUTO-ADVANCE (3 s)
    ══════════════════════════════════════════════ */
 setInterval(() => go(1), 3000);
- async function shareAsImage() {
-  const node = document.getElementById('card');
-
+async function shareAsImage() {
   try {
-    // 1. Freeze blur for capture
-    node.classList.add('freeze-capture');
+    const original = document.getElementById('card');
 
-    // 2. Wait for fonts (CRITICAL)
+    // 1. Clone the card (DO NOT capture the live one)
+    const clone = original.cloneNode(true);
+    clone.classList.add('capture-clone');
+
+    // 2. Force solid background (VERY IMPORTANT)
+    clone.style.background = getComputedStyle(original).backgroundColor || '#0f1629';
+
+    document.body.appendChild(clone);
+
+    // 3. Wait for fonts
     if (document.fonts && document.fonts.ready) {
       await document.fonts.ready;
     }
 
-    // 3. Capture
-    const blob = await htmlToImage.toBlob(node, {
+    // 4. Capture
+    const dataUrl = await htmlToImage.toPng(clone, {
       pixelRatio: 2,
-      cacheBust: true,
-      backgroundColor: getComputedStyle(document.body).backgroundColor
+      cacheBust: true
     });
 
-    node.classList.remove('freeze-capture');
+    // 5. Cleanup
+    document.body.removeChild(clone);
 
-    if (!blob) throw new Error('Image capture failed');
+    // 6. Convert to file
+    const res  = await fetch(dataUrl);
+    const blob = await res.blob();
+    const file = new File([blob], 'a-quote-a-day.png', { type: 'image/png' });
 
-    const file = new File([blob], 'a-quote-a-day.png', {
-      type: 'image/png'
-    });
-
-    // 4. Native share (mobile)
+    // 7. Share
     if (navigator.canShare && navigator.canShare({ files: [file] })) {
       await navigator.share({
         files: [file],
         title: 'A Quote A Day'
       });
     } else {
-      // Desktop fallback
-      const url = URL.createObjectURL(blob);
-      window.open(url, '_blank');
+      window.open(dataUrl, '_blank');
     }
 
   } catch (err) {
-    console.error('Share failed:', err);
-    alert('Could not generate image. Try a different theme or browser.');
+    console.error(err);
+    alert('Image capture failed. This browser does not support sharing yet.');
   }
 }
-
-
 </script>
   <script src="https://unpkg.com/html-to-image@1.11.11/dist/html-to-image.min.js"></script>
 </body>
