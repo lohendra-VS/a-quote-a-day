@@ -4,7 +4,10 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
 <title>A Quote A Day ✨</title>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;700&family=Raleway:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Special+Elite&family=Syne:wght@700;800&family=DM+Mono:wght@300;400&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Unbounded:wght@700;800&family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300;1,600&display=swap" rel="stylesheet">
+<link
+  href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;700&family=Raleway:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Special+Elite&family=Syne:wght@700;800&family=DM+Mono:wght@300;400&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Unbounded:wght@700;800&family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300;1,600&display=swap"
+  rel="stylesheet"
+  crossorigin="anonymous">
 <style>
 /* ─── RESET & BASE ─── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -1102,6 +1105,10 @@ body.t-brutalist .dir-row-avatar { border-radius: 4px; }
 body.t-wellness {
   --about-text: rgba(61,51,71,0.55);
 }
+.freeze-capture {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
 
 
 </style>
@@ -1572,33 +1579,51 @@ function escHtml(s) {
    AUTO-ADVANCE (3 s)
    ══════════════════════════════════════════════ */
 setInterval(() => go(1), 3000);
-  async function shareAsImage() {
+ async function shareAsImage() {
   const node = document.getElementById('card');
 
-  // Temporarily boost quality for stories
-  const blob = await htmlToImage.toBlob(node, {
-    pixelRatio: 2,
-    backgroundColor: null,
-    style: {
-      transform: 'scale(1)',
-      transformOrigin: 'top left'
+  try {
+    // 1. Freeze blur for capture
+    node.classList.add('freeze-capture');
+
+    // 2. Wait for fonts (CRITICAL)
+    if (document.fonts && document.fonts.ready) {
+      await document.fonts.ready;
     }
-  });
 
-  const file = new File([blob], 'a-quote-a-day.png', { type: 'image/png' });
-
-  // Native mobile share (Instagram / WhatsApp / Telegram)
-  if (navigator.canShare && navigator.canShare({ files: [file] })) {
-    await navigator.share({
-      files: [file],
-      title: 'A Quote A Day'
+    // 3. Capture
+    const blob = await htmlToImage.toBlob(node, {
+      pixelRatio: 2,
+      cacheBust: true,
+      backgroundColor: getComputedStyle(document.body).backgroundColor
     });
-  } else {
-    // Desktop fallback → open image
-    const url = URL.createObjectURL(blob);
-    window.open(url, '_blank');
+
+    node.classList.remove('freeze-capture');
+
+    if (!blob) throw new Error('Image capture failed');
+
+    const file = new File([blob], 'a-quote-a-day.png', {
+      type: 'image/png'
+    });
+
+    // 4. Native share (mobile)
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      await navigator.share({
+        files: [file],
+        title: 'A Quote A Day'
+      });
+    } else {
+      // Desktop fallback
+      const url = URL.createObjectURL(blob);
+      window.open(url, '_blank');
+    }
+
+  } catch (err) {
+    console.error('Share failed:', err);
+    alert('Could not generate image. Try a different theme or browser.');
   }
 }
+
 
 </script>
   <script src="https://unpkg.com/html-to-image@1.11.11/dist/html-to-image.min.js"></script>
