@@ -1595,52 +1595,66 @@ function escHtml(s) {
 setInterval(() => go(1), 3000);
 async function shareAsImage() {
   try {
-    const original = document.getElementById('card');
+    const q = quotes[idx];
 
-    // 1. Clone the card (DO NOT capture the live one)
-    const clone = original.cloneNode(true);
-    clone.classList.add('capture-clone');
+    // 1. Fill share card
+    document.getElementById('sc-quote').textContent =
+      `“${q.quote}”`;
 
-    // 2. Force solid background (VERY IMPORTANT)
-    clone.style.background = getComputedStyle(original).backgroundColor || '#0f1629';
+    document.getElementById('sc-author').textContent =
+      `— ${q.author}`;
 
-    document.body.appendChild(clone);
+    document.getElementById('sc-contrib').textContent =
+      `Contributed by ${q.contributor}${q.department !== 'Unknown' ? ` (${q.department})` : ''}`;
 
-    // 3. Wait for fonts
-    if (document.fonts && document.fonts.ready) {
-      await document.fonts.ready;
-    }
+    const node = document.getElementById('shareCard');
 
-    // 4. Capture
-    const dataUrl = await htmlToImage.toPng(clone, {
-      pixelRatio: 2,
-      cacheBust: true
+    // 2. Render to canvas
+    const canvas = await html2canvas(node, {
+      scale: 2,
+      backgroundColor: '#0f1629'
     });
 
-    // 5. Cleanup
-    document.body.removeChild(clone);
+    // 3. Convert to blob
+    const blob = await new Promise(resolve =>
+      canvas.toBlob(resolve, 'image/png')
+    );
 
-    // 6. Convert to file
-    const res  = await fetch(dataUrl);
-    const blob = await res.blob();
+    if (!blob) throw new Error('Canvas export failed');
+
     const file = new File([blob], 'a-quote-a-day.png', { type: 'image/png' });
 
-    // 7. Share
+    // 4. Share or fallback
     if (navigator.canShare && navigator.canShare({ files: [file] })) {
-      await navigator.share({
-        files: [file],
-        title: 'A Quote A Day'
-      });
+      await navigator.share({ files: [file], title: 'A Quote A Day' });
     } else {
-      window.open(dataUrl, '_blank');
+      const url = URL.createObjectURL(blob);
+      window.open(url, '_blank');
     }
 
   } catch (err) {
     console.error(err);
-    alert('Image capture failed. This browser does not support sharing yet.');
+    alert('Image generated, but sharing is not supported on this device.');
   }
 }
+
 </script>
-  <script src="https://unpkg.com/html-to-image@1.11.11/dist/html-to-image.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+
+  <div id="shareCard" style="
+  position: fixed;
+  left: -9999px;
+  top: 0;
+  width: 720px;
+  padding: 60px;
+  background: #0f1629;
+  color: #e2e8f0;
+  font-family: 'Cormorant Garamond', serif;
+  text-align: center;
+">
+  <div id="sc-quote" style="font-size:42px; line-height:1.4;"></div>
+  <div id="sc-author" style="margin-top:30px; font-size:18px; letter-spacing:2px;"></div>
+  <div id="sc-contrib" style="margin-top:20px; font-size:14px; opacity:0.7;"></div>
+</div>
 </body>
 </html>
