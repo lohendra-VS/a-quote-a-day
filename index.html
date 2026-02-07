@@ -1149,6 +1149,9 @@ body.t-wellness {
    rel="noopener">
 ✏️ Add your quote
 </a>
+<button class="comment-btn" onclick="shareAsImage()">
+📸 Share as image
+</button>
 
 
     <!-- Nav -->
@@ -1536,9 +1539,7 @@ function escHtml(s) {
   return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-/* ══════════════════════════════════════════════
-   SWIPE GESTURE (mobile)
-   ══════════════════════════════════════════════ */
+
 (function () {
   let startX = 0, startY = 0, moved = false;
   const THRESHOLD = 40; // px minimum drag to count as a swipe
@@ -1571,6 +1572,35 @@ function escHtml(s) {
    AUTO-ADVANCE (3 s)
    ══════════════════════════════════════════════ */
 setInterval(() => go(1), 3000);
+  async function shareAsImage() {
+  const node = document.getElementById('card');
+
+  // Temporarily boost quality for stories
+  const blob = await htmlToImage.toBlob(node, {
+    pixelRatio: 2,
+    backgroundColor: null,
+    style: {
+      transform: 'scale(1)',
+      transformOrigin: 'top left'
+    }
+  });
+
+  const file = new File([blob], 'a-quote-a-day.png', { type: 'image/png' });
+
+  // Native mobile share (Instagram / WhatsApp / Telegram)
+  if (navigator.canShare && navigator.canShare({ files: [file] })) {
+    await navigator.share({
+      files: [file],
+      title: 'A Quote A Day'
+    });
+  } else {
+    // Desktop fallback → open image
+    const url = URL.createObjectURL(blob);
+    window.open(url, '_blank');
+  }
+}
+
 </script>
+  <script src="https://unpkg.com/html-to-image@1.11.11/dist/html-to-image.min.js"></script>
 </body>
 </html>
