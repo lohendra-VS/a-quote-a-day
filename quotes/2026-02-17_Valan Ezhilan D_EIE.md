@@ -1,16 +1,16 @@
 ---
 
-quote: “Change brings opportunity.” - 
+quote: Change brings opportunity.
 
 author: Nido Qubein
 
-what_it_means_to_me: Life Needs Little Change 
+what_it_means_to_me: Life needs a little change 
 
 contributor: Valan Ezhilan D
 
 department: EIE
 
-source:Top 50 Motivators Words 
+source: 
 
 tags: Change In Life 
 
