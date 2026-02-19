@@ -568,112 +568,156 @@ body::after {
   color: var(--text-muted);
 }
 
-/* ─── MODAL ─── */
-.modal-overlay {
+/* ════════════════════════════════════════
+   SWIPEABLE DECK VIEWER
+   ════════════════════════════════════════ */
+.deck-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(42,42,42,0.55);
+  background: rgba(20,16,10,0.78);
+  backdrop-filter: blur(6px);
   z-index: 200;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
+  flex-direction: column;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.3s;
-  backdrop-filter: blur(4px);
+  transition: opacity 0.3s ease;
 }
-.modal-overlay.open { opacity: 1; pointer-events: auto; }
+.deck-overlay.open { opacity: 1; pointer-events: auto; }
 
-.modal {
-  background: linear-gradient(145deg, #ffffff, #f8f2e8);
-  border: 1px solid var(--border);
-  border-top: 4px solid var(--gold);
-  border-radius: 20px;
-  max-width: 620px;
-  width: 100%;
-  max-height: 90vh;
-  overflow-y: auto;
-  position: relative;
-  transform: translateY(24px) scale(0.98);
-  transition: transform 0.35s cubic-bezier(.4,0,.2,1);
-  box-shadow: 0 24px 60px rgba(0,0,0,0.14), 0 0 0 1px rgba(201,168,76,0.12);
-}
-.modal-overlay.open .modal { transform: translateY(0) scale(1); }
-
-.modal-header {
-  padding: 28px 28px 18px;
-  border-bottom: 1px solid var(--border);
-}
-.modal-kicker {
-  font-family: var(--sans);
-  font-size: 9px;
-  font-weight: 700;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  color: var(--crimson);
-  margin-bottom: 10px;
-}
-.modal-headline {
-  font-family: var(--serif);
-  font-size: clamp(18px, 2.8vw, 26px);
-  font-weight: 400;
-  font-style: italic;
-  line-height: 1.4;
-  color: var(--text);
-}
-.modal-body { padding: 20px 28px 28px; }
-.modal-author-block {
+.deck-topbar {
   display: flex;
   align-items: center;
-  gap: 14px;
-  margin-bottom: 18px;
-  padding-bottom: 16px;
-  border-bottom: 1px solid var(--border);
-}
-.modal-author-initial {
-  width: 52px; height: 52px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--gold), var(--gold-light));
-  color: white;
-  font-family: var(--serif);
-  font-size: 22px;
-  font-style: italic;
-  font-weight: 700;
-  display: flex; align-items: center; justify-content: center;
+  justify-content: space-between;
+  padding: 14px 20px 10px;
   flex-shrink: 0;
-  box-shadow: 0 4px 12px rgba(201,168,76,0.3);
+  gap: 12px;
 }
-/* Quoted author — always the biggest name */
-.modal-author-name {
+.deck-close {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.18);
+  background: rgba(255,255,255,0.08);
+  color: rgba(255,255,255,0.8);
+  font-size: 16px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+.deck-close:hover { background: rgba(255,255,255,0.18); color: #fff; }
+.deck-counter {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: rgba(255,255,255,0.5);
+  letter-spacing: 1.5px;
+  flex-shrink: 0;
+}
+.deck-dots {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+  flex: 1;
+}
+.deck-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.25);
+  cursor: pointer;
+  transition: all 0.25s;
+}
+.deck-dot.active {
+  background: var(--gold);
+  width: 18px;
+  border-radius: 3px;
+  box-shadow: 0 0 6px rgba(201,168,76,0.5);
+}
+.deck-track-wrap {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  align-items: stretch;
+}
+.deck-track {
+  display: flex;
+  height: 100%;
+  transition: transform 0.38s cubic-bezier(.4,0,.2,1);
+  will-change: transform;
+}
+.deck-slide {
+  flex: 0 0 100%;
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 10px 16px 20px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.deck-slide::-webkit-scrollbar { display: none; }
+.deck-card {
+  background: linear-gradient(145deg, #ffffff, #f8f2e8);
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  border-top: 4px solid var(--gold);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+  width: 100%;
+  max-width: 560px;
+  padding: 28px 26px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.dc-kicker {
+  font-family: var(--mono);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--crimson);
+  margin-bottom: 14px;
+}
+.dc-quote {
   font-family: var(--serif);
-  font-size: clamp(26px, 4vw, 34px);
+  font-size: clamp(17px, 3.2vw, 24px);
+  font-style: italic;
+  line-height: 1.55;
+  color: var(--text);
+  padding-left: 14px;
+  border-left: 3px solid var(--gold);
+  margin-bottom: 22px;
+}
+.dc-author-name {
+  font-family: var(--serif);
+  font-size: clamp(24px, 4.5vw, 34px);
   font-weight: 900;
   color: var(--text);
+  line-height: 1.05;
   letter-spacing: 0.2px;
-  line-height: 1.1;
 }
-.modal-author-role {
+.dc-author-role {
   font-family: var(--mono);
   font-size: 8px;
   letter-spacing: 2px;
   text-transform: uppercase;
   color: var(--text-dim);
-  margin-top: 3px;
+  margin-top: 4px;
+  margin-bottom: 18px;
 }
-.modal-author-contrib { display: none; }
-
-/* ── Unified contributor + about box ── */
-.modal-contrib-block {
-  margin-top: 16px;
-  padding: 18px 20px;
+.dc-contrib-box {
   background: linear-gradient(135deg, var(--gold-dim), rgba(201,168,76,0.04));
   border: 1px solid var(--gold-border);
   border-left: 4px solid var(--gold);
   border-radius: 12px;
-  margin-bottom: 18px;
+  padding: 16px 18px;
+  margin-bottom: 20px;
 }
-.modal-contrib-label {
+.dc-contrib-label {
   font-family: var(--mono);
   font-size: 8px;
   font-weight: 700;
@@ -682,92 +726,55 @@ body::after {
   color: var(--gold);
   margin-bottom: 5px;
 }
-.modal-contrib-name {
+.dc-contrib-name {
   font-family: var(--serif);
-  font-size: clamp(20px, 3.2vw, 26px);
+  font-size: clamp(18px, 3.2vw, 24px);
   font-weight: 900;
   color: var(--text);
   line-height: 1.1;
-  letter-spacing: 0.2px;
 }
-.modal-contrib-dept {
+.dc-contrib-dept {
   font-family: var(--mono);
   font-size: 9px;
-  letter-spacing: 2.5px;
+  letter-spacing: 2px;
   text-transform: uppercase;
   color: var(--gold);
+  opacity: 0.8;
   margin-top: 4px;
-  opacity: 0.85;
 }
-.modal-contrib-divider {
+.dc-contrib-divider {
   height: 1px;
   background: var(--gold-border);
-  margin: 16px 0;
+  margin: 14px 0;
 }
-.modal-about-label {
+.dc-about-label {
   font-family: var(--mono);
   font-size: 8px;
   font-weight: 700;
   letter-spacing: 2px;
   text-transform: uppercase;
   color: var(--gold);
-  margin-bottom: 8px;
+  margin-bottom: 7px;
 }
-.modal-about-text {
+.dc-about-text {
   font-family: var(--sans);
   font-style: italic;
-  font-size: 14px;
+  font-size: 13px;
   line-height: 1.7;
   color: var(--text-muted);
 }
-.modal-about-label {
-  font-family: var(--sans);
-  font-size: 9px;
-  font-weight: 700;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: var(--text-muted);
-  margin-bottom: 8px;
-}
-.modal-about-text {
-  font-family: var(--sans);
-  font-style: italic;
-  font-size: 15px;
-  line-height: 1.7;
-  color: var(--text-muted);
-}
-.modal-close {
-  position: absolute;
-  top: 16px; right: 16px;
-  width: 34px; height: 34px;
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  border-radius: 50%;
-  color: var(--text-muted);
-  font-size: 15px;
-  cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  font-family: var(--sans);
-  transition: all 0.2s;
-}
-.modal-close:hover {
-  background: var(--gold-dim);
-  border-color: var(--gold-border);
-  color: var(--text);
-}
-.modal-actions {
-  margin-top: 20px;
+.dc-actions {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
 }
-.modal-btn {
+.dc-btn {
   font-family: var(--sans);
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 1.5px;
   text-transform: uppercase;
-  padding: 9px 16px;
+  padding: 9px 14px;
   border: 1.5px solid var(--border);
   background: var(--surface);
   color: var(--text-muted);
@@ -777,21 +784,46 @@ body::after {
   transition: all 0.2s;
   display: inline-block;
 }
-.modal-btn:hover {
-  border-color: var(--gold-border);
-  color: var(--gold);
-  background: var(--gold-dim);
-  box-shadow: 0 4px 12px rgba(201,168,76,0.15);
-}
-.modal-btn.primary {
+.dc-btn:hover { border-color: var(--gold-border); color: var(--gold); background: var(--gold-dim); }
+.dc-btn.primary {
   background: linear-gradient(135deg, var(--gold), var(--gold-light));
   color: white;
   border-color: transparent;
   box-shadow: 0 4px 12px rgba(201,168,76,0.3);
 }
-.modal-btn.primary:hover {
-  filter: brightness(1.06);
-  box-shadow: 0 6px 16px rgba(201,168,76,0.4);
+.dc-btn.primary:hover { filter: brightness(1.06); }
+.deck-hint {
+  text-align: center;
+  padding: 8px 0 4px;
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: rgba(255,255,255,0.3);
+  flex-shrink: 0;
+}
+.deck-arrow {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.15);
+  background: rgba(255,255,255,0.08);
+  color: rgba(255,255,255,0.7);
+  font-size: 26px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s;
+  z-index: 201;
+  padding-bottom: 2px;
+}
+.deck-arrow:hover { background: rgba(255,255,255,0.18); color: #fff; }
+.deck-arrow-prev { left: 10px; }
+.deck-arrow-next { right: 10px; }
+.deck-arrow:disabled { opacity: 0.2; cursor: default; }
+@media (max-width: 500px) {
+  .deck-arrow { display: none; }
+  .deck-card { padding: 22px 18px 20px; }
 }
 
 /* ─── LOADING ─── */
@@ -914,44 +946,25 @@ body::after {
   </div>
 </main>
 
-<!-- ─── MODAL ─── -->
-<div class="modal-overlay" id="modalOverlay">
-  <div class="modal" id="modalBox">
-    <button class="modal-close" id="modalClose">✕</button>
-    <div class="modal-header">
-      <div class="modal-kicker" id="mKicker"></div>
-      <div class="modal-headline" id="mHeadline"></div>
-    </div>
-    <div class="modal-body">
-      <!-- Quoted author — always biggest -->
-      <div class="modal-author-block">
-        <div class="modal-author-initial" id="mInitial"></div>
-        <div>
-          <div class="modal-author-name" id="mAuthor"></div>
-          <div class="modal-author-role">Quoted Author</div>
-        </div>
-      </div>
-      <!-- Contributor + "what it means to me" — single unified box -->
-      <div class="modal-contrib-block">
-        <div class="modal-contrib-header">
-          <div class="modal-contrib-label">Contributed by</div>
-          <div class="modal-contrib-name" id="mContrib"></div>
-          <div class="modal-contrib-dept" id="mDept"></div>
-        </div>
-        <div id="mAboutWrap" style="display:none">
-          <div class="modal-contrib-divider"></div>
-          <div class="modal-about-label">What this means to me</div>
-          <div class="modal-about-text" id="mAbout"></div>
-        </div>
-      </div>
-      <div class="modal-actions">
-        <a class="modal-btn primary" id="mDiscussion" href="#" target="_blank" rel="noopener">💬 Discuss</a>
-        <button class="modal-btn" id="mShareWA" onclick="shareToWhatsApp()">📲 WhatsApp</button>
-        <button class="modal-btn" id="mShareImg" onclick="shareAsImage()">📸 Save Image</button>
-        <a class="modal-btn" href="https://andrewveda.github.io/a-quote-a-day/submissions" target="_blank">✏️ Add a Quote</a>
-      </div>
-    </div>
+<!-- ─── SWIPEABLE DECK VIEWER ─── -->
+<div class="deck-overlay" id="deckOverlay">
+
+  <!-- Top bar -->
+  <div class="deck-topbar">
+    <button class="deck-close" id="deckClose">✕</button>
+    <div class="deck-counter" id="deckCounter">1 / 1</div>
+    <div class="deck-dots" id="deckDots"></div>
   </div>
+
+  <!-- Track — slides live here -->
+  <div class="deck-track-wrap">
+    <div class="deck-track" id="deckTrack"></div>
+  </div>
+
+  <!-- Arrow nav -->
+  <button class="deck-arrow deck-arrow-prev" id="deckPrev">‹</button>
+  <button class="deck-arrow deck-arrow-next" id="deckNext">›</button>
+
 </div>
 
 <!-- ─── FOOTER ─── -->
@@ -970,6 +983,7 @@ const QUOTES_DIR = "quotes";
    ══════════════════════════════════════════════ */
 let allQuotes = [];      // { quote, author, contributor, department, about, date: Date, dateStr: "YYYY-MM-DD", filename }
 let currentView = 'all';
+let _lastRenderedQuotes = []; // tracks which quotes are in current view for deck context
 
 /* ══════════════════════════════════════════════
    INIT
@@ -1081,6 +1095,7 @@ function renderAll(container) {
   const todayStr = todayDateStr();
   const todayQs  = allQuotes.filter(q => q.dateStr === todayStr);
   const pastQs   = allQuotes.filter(q => q.dateStr !== todayStr);
+  _lastRenderedQuotes = allQuotes;
 
   // TODAY SECTION
   if (todayQs.length) {
@@ -1128,6 +1143,7 @@ function renderAll(container) {
 function renderToday(container) {
   const todayStr = todayDateStr();
   const todayQs  = allQuotes.filter(q => q.dateStr === todayStr);
+  _lastRenderedQuotes = todayQs;
 
   if (!todayQs.length) {
     container.innerHTML = `<div class="empty-state">No quotes submitted today yet.<br><br><a href="https://andrewveda.github.io/a-quote-a-day/submissions" style="color:var(--ink);font-style:normal;font-family:var(--sans);font-size:12px;letter-spacing:2px;">✏️ Be the first — Add yours</a></div>`;
@@ -1163,6 +1179,7 @@ function renderTodaySection(container, qs) {
 function renderGrouped(container, field) {
   const label = field === 'author' ? 'By Author' : 'By Department';
   container.appendChild(makeSectionLabel(label, `${allQuotes.length} quotes`));
+  _lastRenderedQuotes = allQuotes;
 
   const groups = {};
   allQuotes.forEach((q, globalIdx) => {
@@ -1292,18 +1309,157 @@ function makeArchiveDateHeader(dateStrOrLabel, count, isLabel = false) {
 
 /* openModal is defined later in the share section */
 
-function closeModal() {
-  document.getElementById('modalOverlay').classList.remove('open');
+/* ══════════════════════════════════════════════
+   DECK VIEWER ENGINE
+   ══════════════════════════════════════════════ */
+let _deckQuotes  = [];   // the current list of quotes in the deck
+let _deckIdx     = 0;    // active slide index
+let _currentShareQuote = null;
+
+function openDeck(quotes, startIdx) {
+  _deckQuotes = quotes;
+  _deckIdx    = startIdx;
+
+  const track = document.getElementById('deckTrack');
+  track.innerHTML = '';
+
+  // Build all slides
+  quotes.forEach((q, i) => {
+    const slide = document.createElement('div');
+    slide.className = 'deck-slide';
+    slide.innerHTML = buildSlideHTML(q, i);
+
+    // Wire up action buttons
+    slide.querySelector('.dc-btn-discuss').href =
+      `https://github.com/AndrewVeda/a-quote-a-day/discussions?discussions_q=Quote+%23${allQuotes.indexOf(q) + 1}`;
+    slide.querySelector('.dc-btn-wa').addEventListener('click', () => {
+      _currentShareQuote = q; shareToWhatsApp();
+    });
+    slide.querySelector('.dc-btn-img').addEventListener('click', () => {
+      _currentShareQuote = q; shareAsImage();
+    });
+
+    track.appendChild(slide);
+  });
+
+  buildDeckDots();
+  jumpTo(_deckIdx, false);
+
+  document.getElementById('deckOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function buildSlideHTML(q, i) {
+  const globalNum = allQuotes.indexOf(q) + 1;
+  const hasAbout  = !!q.about;
+  return `
+    <div class="deck-card">
+      <div class="dc-kicker">Quote #${globalNum} · ${formatDateFull(q.dateStr)}</div>
+      <div class="dc-quote">"${escHtml(q.quote)}"</div>
+
+      <div class="dc-author-name">${escHtml(q.author)}</div>
+      <div class="dc-author-role">Quoted Author</div>
+
+      <div class="dc-contrib-box">
+        <div class="dc-contrib-label">Contributed by</div>
+        <div class="dc-contrib-name">${escHtml(q.contributor)}</div>
+        <div class="dc-contrib-dept">${escHtml(q.department || '')}</div>
+        ${hasAbout ? `
+          <div class="dc-contrib-divider"></div>
+          <div class="dc-about-label">What this means to me</div>
+          <div class="dc-about-text">${escHtml(q.about)}</div>
+        ` : ''}
+      </div>
+
+      <div class="dc-actions">
+        <a class="dc-btn primary dc-btn-discuss" href="#" target="_blank" rel="noopener">💬 Discuss</a>
+        <button class="dc-btn dc-btn-wa">📲 WhatsApp</button>
+        <button class="dc-btn dc-btn-img">📸 Share</button>
+        <a class="dc-btn" href="https://andrewveda.github.io/a-quote-a-day/submissions" target="_blank">✏️ Add a Quote</a>
+      </div>
+    </div>
+  `;
+}
+
+function buildDeckDots() {
+  const wrap = document.getElementById('deckDots');
+  wrap.innerHTML = '';
+  if (_deckQuotes.length <= 1) return;
+  _deckQuotes.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'deck-dot' + (i === _deckIdx ? ' active' : '');
+    d.addEventListener('click', () => jumpTo(i));
+    wrap.appendChild(d);
+  });
+}
+
+function jumpTo(i, animate = true) {
+  const track = document.getElementById('deckTrack');
+  if (!animate) track.style.transition = 'none';
+  track.style.transform = `translateX(-${i * 100}%)`;
+  if (!animate) requestAnimationFrame(() => { track.style.transition = ''; });
+
+  _deckIdx = i;
+  _currentShareQuote = _deckQuotes[i];
+
+  document.getElementById('deckCounter').textContent = `${i + 1} / ${_deckQuotes.length}`;
+  document.querySelectorAll('.deck-dot').forEach((d, j) => {
+    d.classList.toggle('active', j === i);
+  });
+  document.getElementById('deckPrev').disabled = (i === 0);
+  document.getElementById('deckNext').disabled = (i === _deckQuotes.length - 1);
+}
+
+function closeDeck() {
+  document.getElementById('deckOverlay').classList.remove('open');
   document.body.style.overflow = '';
 }
 
-document.getElementById('modalClose').addEventListener('click', closeModal);
-document.getElementById('modalOverlay').addEventListener('click', e => {
-  if (e.target === document.getElementById('modalOverlay')) closeModal();
+// Close button
+document.getElementById('deckClose').addEventListener('click', closeDeck);
+
+// Arrow buttons
+document.getElementById('deckPrev').addEventListener('click', () => {
+  if (_deckIdx > 0) jumpTo(_deckIdx - 1);
 });
+document.getElementById('deckNext').addEventListener('click', () => {
+  if (_deckIdx < _deckQuotes.length - 1) jumpTo(_deckIdx + 1);
+});
+
+// Keyboard
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') closeModal();
+  if (!document.getElementById('deckOverlay').classList.contains('open')) return;
+  if (e.key === 'Escape')     closeDeck();
+  if (e.key === 'ArrowLeft')  { if (_deckIdx > 0) jumpTo(_deckIdx - 1); }
+  if (e.key === 'ArrowRight') { if (_deckIdx < _deckQuotes.length - 1) jumpTo(_deckIdx + 1); }
 });
+
+// Touch swipe
+(function() {
+  const overlay = document.getElementById('deckOverlay');
+  let sx = 0, sy = 0;
+  overlay.addEventListener('touchstart', e => {
+    sx = e.touches[0].clientX;
+    sy = e.touches[0].clientY;
+  }, { passive: true });
+  overlay.addEventListener('touchend', e => {
+    const dx = e.changedTouches[0].clientX - sx;
+    const dy = e.changedTouches[0].clientY - sy;
+    if (Math.abs(dx) < 40 || Math.abs(dx) < Math.abs(dy)) return;
+    if (dx < 0 && _deckIdx < _deckQuotes.length - 1) jumpTo(_deckIdx + 1);
+    if (dx > 0 && _deckIdx > 0) jumpTo(_deckIdx - 1);
+  }, { passive: true });
+})();
+
+// openModal now opens the deck — context-aware:
+// passes the full current view's quotes so you can swipe through the whole set
+function openModal(q, displayIdx) {
+  // Gather the contextual quote list from the current render
+  // Fall back to all quotes if we can't determine context
+  const ctxQuotes = _lastRenderedQuotes.length ? _lastRenderedQuotes : allQuotes;
+  const startIdx  = ctxQuotes.indexOf(q);
+  openDeck(ctxQuotes, startIdx >= 0 ? startIdx : 0);
+}
 
 /* ══════════════════════════════════════════════
    HELPERS
@@ -1354,32 +1510,7 @@ function escHtml(s) {
 /* ══════════════════════════════════════════════
    SHARE AS IMAGE / WHATSAPP
    ══════════════════════════════════════════════ */
-let _currentShareQuote = null;
-
-function openModal(q, num) {
-  _currentShareQuote = q;
-  document.getElementById('mKicker').textContent   = `Quote #${num} · ${formatDateFull(q.dateStr)}`;
-  document.getElementById('mHeadline').textContent = `"${q.quote}"`;
-  document.getElementById('mInitial').textContent  = q.author[0] || '?';
-  document.getElementById('mAuthor').textContent   = q.author;
-  document.getElementById('mContrib').textContent  = q.contributor;
-  document.getElementById('mDept').textContent     = q.department || '';
-
-  const aboutWrap = document.getElementById('mAboutWrap');
-  if (q.about) {
-    document.getElementById('mAbout').textContent = q.about;
-    aboutWrap.style.display = 'block';
-  } else {
-    aboutWrap.style.display = 'none';
-  }
-
-  const globalIdx = allQuotes.indexOf(q);
-  document.getElementById('mDiscussion').href =
-    `https://github.com/AndrewVeda/a-quote-a-day/discussions?discussions_q=Quote+%23${globalIdx + 1}`;
-
-  document.getElementById('modalOverlay').classList.add('open');
-  document.body.style.overflow = 'hidden';
-}
+// _currentShareQuote is set by the deck engine whenever a slide is active
 
 function populateShareCard(q) {
   document.getElementById('sc-quote').textContent   = `"${q.quote}"`;
@@ -1412,18 +1543,18 @@ async function generateImage() {
 }
 
 async function shareAsImage() {
+  // Update the active slide's share button for feedback
+  const activeSlide = document.querySelector('.deck-slide:nth-child(' + (_deckIdx + 1) + ')');
+  const btn = activeSlide ? activeSlide.querySelector('.dc-btn-img') : null;
+  if (btn) btn.textContent = '⏳…';
   try {
-    document.getElementById('mShareImg').textContent = '⏳ Generating…';
     const blob = await generateImage();
-    document.getElementById('mShareImg').textContent = '📸 Save Image';
-
+    if (btn) btn.textContent = '📸 Share';
     if (!blob) throw new Error('No blob');
     const file = new File([blob], 'a-quote-a-day.png', { type: 'image/png' });
-
     if (navigator.canShare && navigator.canShare({ files: [file] })) {
       await navigator.share({ files: [file], title: 'A Quote A Day' });
     } else {
-      // Fallback: download
       const url = URL.createObjectURL(blob);
       const a   = document.createElement('a');
       a.href = url; a.download = 'a-quote-a-day.png'; a.click();
@@ -1431,25 +1562,21 @@ async function shareAsImage() {
     }
   } catch (err) {
     console.error(err);
-    document.getElementById('mShareImg').textContent = '📸 Save Image';
-    alert('Could not generate image. Try a different browser.');
+    if (btn) btn.textContent = '📸 Share';
+    if (err.name !== 'AbortError') alert('Could not generate image. Try a different browser.');
   }
 }
 
 async function shareToWhatsApp() {
   const q = _currentShareQuote;
   if (!q) return;
-
-  document.getElementById('mShareWA').textContent = '⏳ Preparing…';
-
+  const activeSlide = document.querySelector('.deck-slide:nth-child(' + (_deckIdx + 1) + ')');
+  const btn = activeSlide ? activeSlide.querySelector('.dc-btn-wa') : null;
+  if (btn) btn.textContent = '⏳…';
   try {
     const blob = await generateImage();
-    document.getElementById('mShareWA').textContent = '📲 WhatsApp';
-
+    if (btn) btn.textContent = '📲 WhatsApp';
     const file = new File([blob], 'a-quote-a-day.png', { type: 'image/png' });
-
-    // On mobile (Android/iOS), Web Share API with files will open the native share sheet
-    // where WhatsApp appears. This is the most reliable method.
     if (navigator.canShare && navigator.canShare({ files: [file] })) {
       await navigator.share({
         files: [file],
@@ -1458,23 +1585,14 @@ async function shareToWhatsApp() {
       });
       return;
     }
-
-    // Desktop fallback: open WhatsApp web with text, prompt user to attach saved image
     const text = encodeURIComponent(`"${q.quote}"\n\n— ${q.author}\n\nContributed by ${q.contributor} · A Quote A Day`);
-    const waUrl = `https://wa.me/?text=${text}`;
-
-    // Also trigger image download so they can attach it
-    const url = URL.createObjectURL(blob);
-    const a   = document.createElement('a');
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
     a.href = url; a.download = 'a-quote-a-day.png'; a.click();
     setTimeout(() => URL.revokeObjectURL(url), 2000);
-
-    // Small delay then open WhatsApp
-    setTimeout(() => window.open(waUrl, '_blank'), 400);
-
+    setTimeout(() => window.open(`https://wa.me/?text=${text}`, '_blank'), 400);
   } catch (err) {
-    // If share was cancelled or failed, do text-only fallback
-    document.getElementById('mShareWA').textContent = '📲 WhatsApp';
+    if (btn) btn.textContent = '📲 WhatsApp';
     if (err.name !== 'AbortError') {
       const text = encodeURIComponent(`"${q.quote}"\n\n— ${q.author}\n\nContributed by ${q.contributor} · A Quote A Day`);
       window.open(`https://wa.me/?text=${text}`, '_blank');
