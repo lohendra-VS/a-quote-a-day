@@ -644,22 +644,60 @@ body::after {
   flex-shrink: 0;
   box-shadow: 0 4px 12px rgba(201,168,76,0.3);
 }
-/* Prominent student name in modal */
+/* Quoted author — secondary, smaller */
 .modal-author-name {
   font-family: var(--serif);
-  font-size: 1.5rem;
-  font-weight: 900;
+  font-size: 1.1rem;
+  font-weight: 700;
   color: var(--text);
   letter-spacing: 0.2px;
   line-height: 1.1;
 }
-.modal-author-contrib {
+.modal-author-role {
   font-family: var(--mono);
-  font-size: 9px;
+  font-size: 8px;
   letter-spacing: 2px;
   text-transform: uppercase;
+  color: var(--text-dim);
+  margin-top: 3px;
+}
+.modal-author-contrib { display: none; } /* replaced by modal-contrib-block */
+
+/* ── Contributor hero block ── */
+.modal-contrib-block {
+  margin-top: 18px;
+  padding: 18px 20px;
+  background: linear-gradient(135deg, var(--gold-dim), rgba(201,168,76,0.06));
+  border: 1px solid var(--gold-border);
+  border-left: 4px solid var(--gold);
+  border-radius: 12px;
+  margin-bottom: 18px;
+}
+.modal-contrib-label {
+  font-family: var(--mono);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
   color: var(--gold);
-  margin-top: 4px;
+  margin-bottom: 6px;
+}
+.modal-contrib-name {
+  font-family: var(--serif);
+  font-size: clamp(24px, 4vw, 32px);
+  font-weight: 900;
+  color: var(--text);
+  line-height: 1.1;
+  letter-spacing: 0.2px;
+}
+.modal-contrib-dept {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-top: 5px;
+  opacity: 0.85;
 }
 .modal-about-label {
   font-family: var(--sans);
@@ -864,12 +902,19 @@ body::after {
       <div class="modal-headline" id="mHeadline"></div>
     </div>
     <div class="modal-body">
+      <!-- Quoted author (secondary) -->
       <div class="modal-author-block">
         <div class="modal-author-initial" id="mInitial"></div>
         <div>
           <div class="modal-author-name" id="mAuthor"></div>
-          <div class="modal-author-contrib" id="mContrib"></div>
+          <div class="modal-author-role">Quoted Author</div>
         </div>
+      </div>
+      <!-- Contributor hero block -->
+      <div class="modal-contrib-block">
+        <div class="modal-contrib-label">Contributed by</div>
+        <div class="modal-contrib-name" id="mContrib"></div>
+        <div class="modal-contrib-dept" id="mDept"></div>
       </div>
       <div id="mAboutWrap" style="display:none">
         <div class="modal-about-label">What this means to me</div>
@@ -1293,7 +1338,8 @@ function openModal(q, num) {
   document.getElementById('mHeadline').textContent = `"${q.quote}"`;
   document.getElementById('mInitial').textContent  = q.author[0] || '?';
   document.getElementById('mAuthor').textContent   = q.author;
-  document.getElementById('mContrib').textContent  = `Contributed by ${q.contributor}${q.department ? ` · ${q.department}` : ''}`;
+  document.getElementById('mContrib').textContent  = q.contributor;
+  document.getElementById('mDept').textContent     = q.department || '';
 
   const aboutWrap = document.getElementById('mAboutWrap');
   if (q.about) {
