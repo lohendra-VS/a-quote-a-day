@@ -1583,11 +1583,11 @@ async function shareToWhatsApp() {
       await navigator.share({
         files: [file],
         title: 'A Quote A Day',
-        text: `"${q.quote}"\n— ${q.author}\n\nContributed by ${q.contributor}\n\n✨ A Quote A Day · SRM VEC\nhttps://andrewveda.github.io/SRM-VEC-English-PWA`,
+        text: `"${q.quote}"\n— ${q.author}\n\nContributed by ${q.contributor}\n\n✨ A Quote A Day · \nhttps://andrewveda.github.io/SRM-VEC-English-PWA`,
       });
       return;
     }
-    const text = encodeURIComponent(`"${q.quote}"\n— ${q.author}\n\nContributed by ${q.contributor}\n\n✨ A Quote A Day · SRM VEC\nhttps://andrewveda.github.io/SRM-VEC-English-PWA`);
+    const text = encodeURIComponent(`"${q.quote}"\n— ${q.author}\n\nContributed by ${q.contributor}\n\n✨ A Quote A Day · \nhttps://andrewveda.github.io/SRM-VEC-English-PWA`);
     const url  = URL.createObjectURL(blob);
     const a    = document.createElement('a');
     a.href = url; a.download = 'a-quote-a-day.jpg'; a.click();
@@ -1596,7 +1596,7 @@ async function shareToWhatsApp() {
   } catch (err) {
     if (btn) btn.textContent = '📲 WhatsApp';
     if (err.name !== 'AbortError') {
-      const text = encodeURIComponent(`"${q.quote}"\n— ${q.author}\n\nContributed by ${q.contributor}\n\n✨ A Quote A Day · SRM VEC\nhttps://andrewveda.github.io/SRM-VEC-English-PWA`);
+      const text = encodeURIComponent(`"${q.quote}"\n— ${q.author}\n\nContributed by ${q.contributor}\n\n✨ A Quote A Day · \nhttps://andrewveda.github.io/SRM-VEC-English-PWA`);
       window.open(`https://wa.me/?text=${text}`, '_blank');
     }
   }
@@ -1676,7 +1676,7 @@ async function shareToWhatsApp() {
 
   <!-- Footer with PWA link -->
   <div style="flex-shrink:0;border-top:1px solid rgba(0,0,0,0.06);padding:16px 36px;display:flex;align-items:center;justify-content:space-between;">
-    <div style="font-family:'DM Mono',monospace;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:#b0a99f;">SRM VEC · English Dept</div>
+    <div style="font-family:'DM Mono',monospace;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:#b0a99f;"></div>
     <div style="font-family:'DM Mono',monospace;font-size:8px;color:#c9a84c;letter-spacing:0.5px;">andrewveda.github.io/SRM-VEC-English-PWA</div>
   </div>
 
