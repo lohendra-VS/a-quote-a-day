@@ -1,10 +1,10 @@
 ---
-quote: “I've learned that people will forget what you said, people will forget what you did, but people will never forget how you made them feel.”
-author: Maya Angelou 
-what_it_means_to_me: This quote reminds me that the impact we have on others through our actions and words is what truly matters. It emphasizes the importance of empathy, kindness, and treating everyone with respect, as these qualities leave a lasting impression that transcends time and circumstances.
+quote: “You can never be overdressed or overeducated.”
+author: Oscar Wilde 
+what_it_means_to_me: This quote emphasizes the value of investing in oneself through education and personal presentation. It suggests that being well-prepared and knowledgeable never goes out of style and can open doors to opportunities, while also highlighting the importance of maintaining a polished and professional appearance in all aspects of life.
 contributor: Sanjay N
 department: EIE
 source: Internet
-tags: Empathy, Kindness, Respect, Impact
+tags: Education, Presentation, Professionalism, Opportunity
 
 ---
